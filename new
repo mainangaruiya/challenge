@@ -1,0 +1,99 @@
+package edu.psu.ist;
+
+import java.io.*;
+import java.util.*;
+
+public class CarInfoApp {
+    public static String getCarModel() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the car model: ");
+        return scanner.nextLine();
+    }
+
+    public static int getReleaseYear() {
+        Scanner scanner = new Scanner(System.in);
+        int year;
+        do {
+            System.out.print("Enter the car's release year (must be positive): ");
+            year = scanner.nextInt();
+        } while (year <= 0);
+        return year;
+    }
+
+    public static ArrayList<String> getCarTrims() {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<String> trims = new ArrayList<>();
+        System.out.println("Enter trims for the car (type 'done' to finish):");
+        while (true) {
+            String trim = scanner.nextLine();
+            if (trim.equalsIgnoreCase("done")) break;
+            trims.add(trim);
+        }
+        return trims;
+    }
+
+    public static String getCarType() {
+        Scanner scanner = new Scanner(System.in);
+        String[] validTypes = {"Truck", "Sedan", "Coupe", "Station Wagon", "Van"};
+        String type;
+        do {
+            System.out.print("Enter the car type (Truck, Sedan, Coupe, Station Wagon, Van): ");
+            type = scanner.nextLine();
+            if (Arrays.asList(validTypes).contains(type)) break;
+            System.out.println("Invalid type. Please enter one of the valid types.");
+        } while (true);
+        return type;
+    }
+
+    public static double getCarMPG() {
+        Scanner scanner = new Scanner(System.in);
+        double mpg;
+        do {
+            System.out.print("Enter the car's MPG (must be non-negative): ");
+            mpg = scanner.nextDouble();
+        } while (mpg < 0);
+        return mpg;
+    }
+
+    public static String combineInfo(String model, int year, ArrayList<String> trims, String type, double mpg) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Model: ").append(model).append("\n");
+        sb.append("Year: ").append(year).append("\n");
+        sb.append("Trims: ").append(String.join(", ", trims)).append("\n");
+        sb.append("Type: ").append(type).append("\n");
+        sb.append("MPG: ").append(mpg).append("\n");
+        return sb.toString();
+    }
+
+    public static void writeToFile(String info) {
+        try (PrintWriter writer = new PrintWriter("car.txt")) {
+            writer.println(info);
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Unable to write to file.");
+        }
+    }
+
+    public static void readFromFile() {
+        try (Scanner scanner = new Scanner(new File("car.txt"))) {
+            while (scanner.hasNextLine()) {
+                System.out.println(scanner.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: File not found.");
+        }
+    }
+
+    public static void main(String[] args) {
+        String model = getCarModel();
+        int year = getReleaseYear();
+        ArrayList<String> trims = getCarTrims();
+        String type = getCarType();
+        double mpg = getCarMPG();
+
+        String carInfo = combineInfo(model, year, trims, type, mpg);
+        writeToFile(carInfo);
+
+        System.out.println("\nCar information saved to file. Reading file contents:");
+        readFromFile();
+    }
+}
